@@ -35,7 +35,7 @@ results = []  # Array to store results
 loop do
   puts "\nChoose operation: add, subtract, multiply, divide, or exit"
   print "Operation: "
-  op = gets.chomp.downcase
+  op = gets.chomp.strip.downcase
 
   break if op == "exit"
 
