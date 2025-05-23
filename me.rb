@@ -28,6 +28,10 @@ end
 calc = Calculator.new
 
 puts "Welcome to the Ruby Calculator!"
+# results: Array
+# An array used to store the results of computations or operations.
+results = []  # Array to store results
+
 loop do
   puts "\nChoose operation: add, subtract, multiply, divide, or exit"
   print "Operation: "
@@ -53,7 +57,11 @@ loop do
              "Unknown operation"
            end
 
+  results << "Operation: #{op}, Numbers: #{a}, #{b}, Result: #{result}"  # Store in array
   puts "Result: #{result}"
 end
+
+puts "\nAll Results:"
+results.each { |r| puts r }
 
 puts "Goodbye!"
