@@ -1,53 +1,94 @@
-def data_entry
-  # Initialize an empty array to store the entries
-  entries = []
-  
-  puts "Welcome to the Data Entry System"
-  puts "--------------------------------"
-  
-  loop do
-    # Initialize a hash for the current entry
+# -----------------------------------------------------------------------------
+# DataEntrySystem v2.0
+# A simple command-line Ruby application for collecting and summarizing user data.
+# Users are prompted to enter their name, age, email, and address for each entry.
+# Entries are collected in a loop until the user leaves the name blank.
+# The system validates age input, allows multiple entries, and displays a summary.
+# -----------------------------------------------------------------------------
+
+class DataEntrySystem
+  def initialize
+    @entries = []
+    @prompts = {
+      name: "Full Name",
+      age: "Age",
+      email: "Email Address",
+      address: "Physical Address"
+    }
+  end
+
+  def run
+    display_welcome
+    collect_entries
+    display_summary
+    @entries
+  end
+
+  private
+
+  def display_welcome
+    puts "\n╔════════════════════════════════════╗"
+    puts "║      DATA ENTRY SYSTEM v2.0       ║"
+    puts "╚════════════════════════════════════╝"
+    puts "\nInstructions:"
+    puts "- Complete all fields for each entry"
+    puts "- Leave name blank to finish\n\n"
+  end
+
+  def collect_entries
+    loop do
+      entry = collect_single_entry
+      break if entry.nil?
+
+      @entries << entry
+      puts "\n✓ Entry added successfully!"
+      break unless continue?
+    end
+  end
+
+  def collect_single_entry
+    puts "\n#{' NEW ENTRY '.center(40, '─')}"
+    
     entry = {}
+    @prompts.each do |field, prompt|
+      print "#{prompt}: "
+      input = gets.chomp.strip
+      
+      # Exit if name is blank
+      return nil if field == :name && input.empty?
+      
+      # Validate age if provided
+      if field == :age && !input.empty?
+        unless input =~ /^\d+$/
+          puts "⚠️ Age must be a number. Please try again."
+          redo
+        end
+      end
+      
+      entry[field] = input.empty? ? "N/A" : input
+    end
     
-    puts "\nNew Entry (leave any field blank to finish)"
-    
-    # Get user input for each field
-    print "Name: "
-    entry[:name] = gets.chomp.strip
-    
-    # Exit if name is blank (assuming name is required)
-    break if entry[:name].empty?
-    
-    print "Age: "
-    entry[:age] = gets.chomp.strip
-    
-    print "Email: "
-    entry[:email] = gets.chomp.strip
-    
-    print "Address: "
-    entry[:address] = gets.chomp.strip
-    
-    # Add the entry to the entries array
-    entries << entry
-    
-    puts "\nEntry added successfully!"
-    print "Add another entry? (y/n): "
-    continue = gets.chomp.downcase
-    break unless continue == 'y'
+    entry
   end
-  
-  puts "\nData Entry Complete. Here's your data:"
-  puts "--------------------------------------"
-  
-  # Display all entries
-  entries.each_with_index do |entry, index|
-    puts "\nEntry #{index + 1}:"
-    entry.each { |key, value| puts "#{key.capitalize}: #{value}" }
+
+  def continue?
+    print "\nAdd another entry? (y/n): "
+    gets.chomp.downcase == 'y'
   end
-  
-  # Return the entries array
-  entries
+
+  def display_summary
+    return if @entries.empty?
+
+    puts "\n#{' DATA SUMMARY '.center(40, '═')}"
+    @entries.each_with_index do |entry, index|
+      puts "\n#{ "Entry #{index + 1}".center(40, '─') }"
+      entry.each do |field, value|
+        puts "• #{@prompts[field] || field.to_s.capitalize}: #{value}"
+      end
+    end
+    puts "\nTotal entries: #{@entries.size}".center(40)
+  end
 end
 
-# Call the function to start data entry
-data_entry
+# Run the program
+DataEntrySystem.new.run
