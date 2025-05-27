@@ -196,3 +196,22 @@ if __name__ == "__main__":
         system.run()
     except KeyboardInterrupt:
         print(f"\n{Fore.RED}Operation cancelled by user. Goodbye!{Style.RESET_ALL}")
+
+# -----------------------------------------------------------------------------
+# DataEntrySystem v3.0 (Python)
+# A modern command-line application for collecting and managing user data.
+#
+# Features:
+#   - Interactive terminal menu (add, view, search, export, exit)
+#   - Validates age and email input
+#   - Saves data to a JSON file for persistence
+#   - Exports data to JSON or CSV
+#   - Colorized output and formatted tables for readability
+#
+# How to use:
+#   1. Install dependencies:
+#        pip install simple-term-menu tabulate colorama
+#   2. Run the program:
+#        python data_entry_system.py
+#   3. Follow the on-screen menu to add, view, search, or export entries.
+# -----------------------------------------------------------------------------
