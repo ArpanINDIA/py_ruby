@@ -2,7 +2,18 @@
 # -----------------------------------------------------------------------------
 # DataEntrySystem v3.0
 # An enhanced command-line Ruby application for collecting and managing user data.
-# Features improved validation, better UI, data persistence, and more options.
+#
+# Features:
+#   - Interactive menu-driven UI (add, view, search, export, exit)
+#   - Validates age and email input
+#   - Saves data to a JSON file for persistence
+#   - Exports data to JSON or CSV
+#   - Colorized output and Unicode tables for readability
+#
+# How to use:
+#   1. Install dependencies: gem install tty-prompt tty-table colorize
+#   2. Run: ruby date_entry_v3.rb
+#   3. Follow on-screen prompts to add, view, search, or export entries.
 # -----------------------------------------------------------------------------
 
 require 'tty-prompt'
