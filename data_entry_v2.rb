@@ -60,7 +60,7 @@ class DataEntrySystem
       # Validate age if provided
       if field == :age && !input.empty?
         unless input =~ /^\d+$/
-          puts "⚠️ Age must be a number. Please try again."
+          puts "⚠️ Age must be a number. Please enter Age."
           redo
         end
       end
