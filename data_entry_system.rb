@@ -3,7 +3,26 @@
 #
 # Install dependencies: gem install tty-prompt tty-table colorize axlsx roo
 # -----------------------------------------------------------------------------
+# =============================================================================
+# DataEntrySystem v4.0
+#
+# A command-line data entry and management system with user authentication,
+# admin controls, entry editing, pagination, search, and export features.
+# Features:
+# - User registration and login (admin/user roles)
+# - Add, view, edit, and delete entries (with permissions)
+# - Paginated entry viewing
+# - Search entries by name, email, or address
+# - Export data/search results to JSON, CSV, Excel, or XML
+# - Admin panel for user management and system settings
+#
+# Dependencies: tty-prompt, tty-table, colorize, axlsx, roo
+# Install with: gem install tty-prompt tty-table colorize axlsx roo
+# =============================================================================
 
+
+
+# ...existing code...
 require 'tty-prompt'
 require 'tty-table'
 require 'json'
