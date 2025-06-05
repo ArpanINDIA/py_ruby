@@ -24,31 +24,30 @@ def load_config
     begin
       config_data = JSON.parse(File.read(CONFIG_FILE), symbolize_names: true)
       if config_data[:headers].is_a?(Array) && !config_data[:headers].empty?
-        $current_headers = config_data[:headers]
+        $current_headers = config_data[:headers].map(&:dup) # Use dup to avoid reference issues
         # Ensure 'id' column is always present and first
         id_header = $current_headers.find { |h| h[:key] == :id }
         unless id_header
           puts "Warning: 'ID' column not found in config. Adding default 'ID' column."
           id_header = { key: :id, display: "ID", type: "string" }
-          $current_headers.unshift(id_header) # Add to beginning
+          $current_headers.unshift(id_header)
         end
-        # Ensure 'id' is always the first header
         $current_headers.sort_by! { |h| h[:key] == :id ? 0 : 1 }
       else
         puts "Warning: 'headers' array missing or empty in config.json. Using default headers."
-        $current_headers = DEFAULT_HEADERS.dup # Use a duplicate to allow modification
+        $current_headers = DEFAULT_HEADERS.map(&:dup)
       end
     rescue JSON::ParserError => e
       puts "Error parsing config.json: #{e.message}. Using default headers."
-      $current_headers = DEFAULT_HEADERS.dup
+      $current_headers = DEFAULT_HEADERS.map(&:dup)
     rescue StandardError => e
       puts "Error loading config: #{e.message}. Using default headers."
-      $current_headers = DEFAULT_HEADERS.dup
+      $current_headers = DEFAULT_HEADERS.map(&:dup)
     end
   else
     puts "config.json not found or empty. Initializing with default headers."
-    $current_headers = DEFAULT_HEADERS.dup
-    save_config # Save default config immediately
+    $current_headers = DEFAULT_HEADERS.map(&:dup)
+    save_config
   end
 end
 
@@ -146,7 +145,7 @@ end
 def press_any_key
   puts "\nPress any key to continue..."
   STDIN.getch
-  system "clear" || system "cls" # Clear console after key press
+  # system("clear") || system("cls") # Commented out to keep output visible
 end
 
 # --- Core Functionalities ---
@@ -468,19 +467,32 @@ def manage_columns_menu(records_array, records_by_id)
     print "Choose an option: "
     choice = gets.chomp
 
-    system "clear" || system "cls"
+    system("clear") || system("cls")
 
     case choice
     when '1'
       display_current_columns
     when '2'
       add_new_column
+      # Reload config and data after column change
+      load_config
+      records_array.replace(load_data[0])
+      records_by_id.replace(load_data[1])
     when '3'
-      rename_column(records_array) # Pass records_array for potential key changes (though not strictly needed for display name change)
+      rename_column(records_array)
+      load_config
+      records_array.replace(load_data[0])
+      records_by_id.replace(load_data[1])
     when '4'
       change_column_type
+      load_config
+      records_array.replace(load_data[0])
+      records_by_id.replace(load_data[1])
     when '5'
       delete_column(records_array, records_by_id)
+      load_config
+      records_array.replace(load_data[0])
+      records_by_id.replace(load_data[1])
     when '6'
       break
     else
@@ -490,12 +502,11 @@ def manage_columns_menu(records_array, records_by_id)
   end
 end
 
-
 # --- Main Application Loop ---
 def main_menu
-  load_config # Load headers configuration first
-  records_array, records_by_id = load_data() # Then load data based on headers
-  system "clear" || system "cls" # Initial clear
+  load_config
+  records_array, records_by_id = load_data()
+  system("clear") || system("cls")
 
   loop do
     puts "\n--- Contact Management System (Advanced) ---"
@@ -504,14 +515,13 @@ def main_menu
     puts "3. Search Contacts"
     puts "4. Update Contact"
     puts "5. Delete Contact"
-    puts "6. Manage Columns" # New option
+    puts "6. Manage Columns"
     puts "7. Save and Exit"
     puts "8. Exit Without Saving"
     print "Choose an option: "
     choice = gets.chomp
 
-    # Clear screen before processing choice, except for exit options
-    system "clear" || system "cls" unless ['7', '8'].include?(choice)
+    system("clear") || system("cls") unless ['7', '8'].include?(choice)
 
     case choice
     when '1'
@@ -526,6 +536,9 @@ def main_menu
       delete_contact(records_array, records_by_id)
     when '6'
       manage_columns_menu(records_array, records_by_id)
+      # After managing columns, reload config and data
+      load_config
+      records_array, records_by_id = load_data()
     when '7'
       save_records(records_array)
       puts "Exiting. Goodbye!"
